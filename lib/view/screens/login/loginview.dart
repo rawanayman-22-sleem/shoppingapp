@@ -14,6 +14,7 @@ import '../../logic/authentication_cubit.dart';
 import '../signup/signupbody.dart';
 
 
+
 class Loginview extends StatefulWidget {
   const Loginview({super.key});
 
@@ -25,11 +26,13 @@ class _LoginviewState extends State<Loginview> {
   final TextEditingController emailcontroller = TextEditingController();
   final TextEditingController passwordcontroller = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  var isPasswordvisible = false;
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AuthenticationCubit, AuthenticationState>(
       listener: (context, state) {
-         if (state is LoginSuccess) {
+         if (state is LoginSuccess || state is GoogleSignInSuccess) {
             Navigator.of(context).pushReplacement(
               MaterialPageRoute(builder: (_) => MainHomeView()),
             );
@@ -72,10 +75,14 @@ class _LoginviewState extends State<Loginview> {
                               CustomTextFromField(
                                 controller: passwordcontroller,
                                 sufficon: IconButton(
-                                    onPressed: () {},
-                                    icon: Icon(Icons.visibility_off)),
+                                    onPressed: () {
+                                      setState(() {
+                                        isPasswordvisible = !isPasswordvisible;
+                                      });
+                                    },
+                                    icon: Icon(isPasswordvisible? Icons.visibility : Icons.visibility_off)),
                                 labltext: 'Password',
-                                isSecure: true,
+                                isSecure: !isPasswordvisible,
                 
                               ),
                               SizedBox(height: 15,),
@@ -104,7 +111,7 @@ class _LoginviewState extends State<Loginview> {
                               SizedBox(height: 15,),
                               CustomrowwithArrow(
                                 text: 'Login with Google',
-                                onTap: () {},
+                                onTap: () => cubit.googleSignIn,
                               ),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
